@@ -2,8 +2,10 @@
 
 import React from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { motion } from 'framer-motion';
 import Map from './components/Map';
+import CompanyInfo from './components/CompanyInfo';
 
 export default function Home() {
   return (
@@ -55,14 +57,26 @@ export default function Home() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.6 }}
-            className="space-y-4"
+            className="flex flex-col sm:flex-row gap-4 justify-center"
           >
-            <button className="bg-mocha-warm hover:bg-mocha-dark text-white font-bold py-3 px-8 rounded-full transition duration-300 w-full sm:w-auto">
-              Заказать онлайн
-            </button>
-            <button className="bg-mocha-lightest/90 hover:bg-white text-mocha-darker font-bold py-3 px-8 rounded-full transition duration-300 w-full sm:w-auto sm:ml-4">
-              Предзаказ выпечки
-            </button>
+            <Link href="/order" className="block w-full sm:w-auto">
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="bg-mocha-warm hover:bg-mocha-dark text-white font-bold py-3 px-8 rounded-full transition duration-300 w-full"
+              >
+                Заказать онлайн
+              </motion.button>
+            </Link>
+            <Link href="/order" className="block w-full sm:w-auto">
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="bg-mocha-lightest/90 hover:bg-white text-mocha-darker font-bold py-3 px-8 rounded-full transition duration-300 w-full"
+              >
+                Предзаказ выпечки
+              </motion.button>
+            </Link>
           </motion.div>
         </div>
       </section>
@@ -101,19 +115,43 @@ export default function Home() {
               <h3 className="text-2xl font-serif text-mocha-darker mb-4">Кофе</h3>
               <p className="text-mocha-dark mb-4">Свежеобжаренные зерна и авторские напитки</p>
               <p className="text-sm text-mocha-cool mb-4">Время приготовления: 3-5 минут</p>
-              <button className="bg-mocha-warm hover:bg-mocha-dark text-white font-bold py-2 px-6 rounded-full transition duration-300 w-full">Заказать</button>
+              <Link href="/order">
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="bg-mocha-warm hover:bg-mocha-dark text-white font-bold py-2 px-6 rounded-full transition duration-300 w-full"
+                >
+                  Заказать
+                </motion.button>
+              </Link>
             </div>
             <div className="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow">
               <h3 className="text-2xl font-serif text-mocha-darker mb-4">Выпечка</h3>
               <p className="text-mocha-dark mb-4">Свежая выпечка каждый день</p>
               <p className="text-sm text-mocha-cool mb-4">Доступен предзаказ</p>
-              <button className="bg-mocha-warm hover:bg-mocha-dark text-white font-bold py-2 px-6 rounded-full transition duration-300 w-full">Предзаказ</button>
+              <Link href="/order">
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="bg-mocha-warm hover:bg-mocha-dark text-white font-bold py-2 px-6 rounded-full transition duration-300 w-full"
+                >
+                  Предзаказ
+                </motion.button>
+              </Link>
             </div>
             <div className="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow">
               <h3 className="text-2xl font-serif text-mocha-darker mb-4">Десерты</h3>
               <p className="text-mocha-dark mb-4">Авторские десерты и сладости</p>
               <p className="text-sm text-mocha-cool mb-4">Предзаказ с 8:00 до 22:00 часов</p>
-              <button className="bg-mocha-warm hover:bg-mocha-dark text-white font-bold py-2 px-6 rounded-full transition duration-300 w-full">Заказать</button>
+              <Link href="/order">
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="bg-mocha-warm hover:bg-mocha-dark text-white font-bold py-2 px-6 rounded-full transition duration-300 w-full"
+                >
+                  Заказать
+                </motion.button>
+              </Link>
             </div>
           </div>
         </div>
@@ -157,8 +195,11 @@ export default function Home() {
                 src="/products/potato-pies.jpg"
                 alt="Пирожки с картошкой"
                 fill
+                quality={100}
+                priority
                 className="object-cover transition-transform duration-500 group-hover:scale-110"
                 sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                style={{ objectFit: 'cover' }}
               />
               <div className="absolute inset-0 bg-gradient-to-t from-mocha-darker/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                 <div className="absolute bottom-0 left-0 right-0 p-4">
@@ -192,13 +233,15 @@ export default function Home() {
           </div>
           
           <div className="text-center mt-12">
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="bg-mocha-warm hover:bg-mocha-dark text-white font-bold py-3 px-8 rounded-full transition duration-300"
-            >
-              Смотреть все фото
-            </motion.button>
+            <Link href="/gallery">
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="bg-mocha-warm hover:bg-mocha-dark text-white font-bold py-3 px-8 rounded-full transition duration-300"
+              >
+                Смотреть все фото
+              </motion.button>
+            </Link>
           </div>
         </div>
       </section>
@@ -232,6 +275,9 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Добавляем секцию с информацией о компании */}
+      <CompanyInfo />
+      
       {/* Map Section */}
       <Map />
     </main>

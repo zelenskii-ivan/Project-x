@@ -1,8 +1,12 @@
+'use client';
+
 import React from 'react';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
+import { useCart } from '../contexts/CartContext';
 
 interface ProductCardProps {
+  id: string;
   title: string;
   description: string;
   price: string;
@@ -10,7 +14,18 @@ interface ProductCardProps {
   category: string;
 }
 
-export default function ProductCard({ title, description, price, imageUrl, category }: ProductCardProps) {
+export default function ProductCard({ id, title, description, price, imageUrl, category }: ProductCardProps) {
+  const { addItem } = useCart();
+
+  const handleAddToCart = () => {
+    addItem({
+      id,
+      name: title,
+      price: parseFloat(price),
+      category,
+    });
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -42,9 +57,10 @@ export default function ProductCard({ title, description, price, imageUrl, categ
           <motion.button
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.95 }}
-            className="btn-primary"
+            onClick={handleAddToCart}
+            className="bg-mocha-warm hover:bg-mocha-dark text-white font-bold py-2 px-6 rounded-full transition duration-300"
           >
-            Заказать
+            В корзину
           </motion.button>
         </div>
       </div>

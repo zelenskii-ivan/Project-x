@@ -2,12 +2,25 @@
 
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import Link from 'next/link';
+import { useSession, signOut } from 'next-auth/react';
+import { useCart } from '../contexts/CartContext';
+import Cart from './Cart';
+import { usePathname } from 'next/navigation';
 
 export default function Navigation() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isCartOpen, setIsCartOpen] = useState(false);
+  const { data: session } = useSession();
+  const { totalItems } = useCart();
+  const pathname = usePathname();
 
   const scrollToSection = (sectionId: string) => {
     setIsMenuOpen(false);
+    if (window.location.pathname !== '/') {
+      window.location.href = `/#${sectionId}`;
+      return;
+    }
     const section = document.getElementById(sectionId);
     if (section) {
       const navHeight = 64; // высота навигации
@@ -20,61 +33,49 @@ export default function Navigation() {
   };
 
   return (
-    <nav className="fixed w-full z-50 bg-white/90 backdrop-blur-sm">
-      <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between h-16">
-          <a
-            href="/"
-            className="text-2xl font-serif text-mocha-darker hover:scale-105 transition-transform"
-          >
-            Проект Икс
-          </a>
-          <div className="hidden md:flex items-center space-x-8">
-            <button
-              onClick={() => scrollToSection('menu')}
-              className="text-mocha-dark hover:text-mocha-warm hover:scale-105 transition-all"
-            >
-              Меню
-            </button>
-            <button
-              onClick={() => scrollToSection('gallery')}
-              className="text-mocha-dark hover:text-mocha-warm hover:scale-105 transition-all"
-            >
-              Галерея
-            </button>
-            <button
-              onClick={() => scrollToSection('preorder')}
-              className="text-mocha-dark hover:text-mocha-warm hover:scale-105 transition-all"
-            >
-              Предзаказ
-            </button>
-            <button
-              onClick={() => scrollToSection('location')}
-              className="text-mocha-dark hover:text-mocha-warm hover:scale-105 transition-all"
-            >
-              Где нас найти
-            </button>
-            <button
-              className="bg-mocha-warm hover:bg-mocha-dark text-white font-bold py-2 px-6 rounded-full transition duration-300"
-            >
-              Заказать онлайн
-            </button>
+    <>
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-white shadow-md">
+        <div className="container mx-auto px-4">
+          <div className="flex justify-between items-center h-16">
+            <Link href="/" className="text-2xl font-serif text-mocha-darker">
+              Portal X
+            </Link>
+
+            <div className="flex items-center space-x-4">
+              <Link 
+                href="/order"
+                className="text-mocha-dark hover:text-mocha-warm transition-colors"
+              >
+                Заказать
+              </Link>
+              
+              {session ? (
+                <>
+                  <Link 
+                    href="/profile"
+                    className="text-mocha-dark hover:text-mocha-warm transition-colors"
+                  >
+                    Профиль
+                  </Link>
+                  <button
+                    onClick={() => signOut()}
+                    className="text-mocha-dark hover:text-mocha-warm transition-colors"
+                  >
+                    Выйти
+                  </button>
+                </>
+              ) : (
+                <Link 
+                  href="/login"
+                  className="text-mocha-dark hover:text-mocha-warm transition-colors"
+                >
+                  Войти
+                </Link>
+              )}
+            </div>
           </div>
-          <button
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="md:hidden text-mocha-darker hover:scale-105 transition-transform"
-          >
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path 
-                strokeLinecap="round" 
-                strokeLinejoin="round" 
-                strokeWidth={2} 
-                d={isMenuOpen ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16M4 18h16"} 
-              />
-            </svg>
-          </button>
         </div>
-      </div>
+      </nav>
 
       {/* Мобильное меню */}
       <AnimatePresence>
@@ -110,16 +111,66 @@ export default function Navigation() {
               >
                 Где нас найти
               </button>
+
+              {/* Кнопка корзины в мобильном меню */}
               <button
-                className="w-full bg-mocha-warm hover:bg-mocha-dark text-white font-bold py-2 px-6 rounded-full transition duration-300"
-                onClick={() => setIsMenuOpen(false)}
+                onClick={() => {
+                  setIsCartOpen(true);
+                  setIsMenuOpen(false);
+                }}
+                className="flex items-center justify-between w-full text-left text-mocha-dark hover:text-mocha-warm py-2 transition-colors"
               >
-                Заказать онлайн
+                <span>Корзина</span>
+                {totalItems > 0 && (
+                  <span className="bg-mocha-warm text-white text-xs px-2 py-1 rounded-full">
+                    {totalItems}
+                  </span>
+                )}
               </button>
+
+              {session ? (
+                <>
+                  <Link href="/profile">
+                    <motion.button
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      className="block w-full text-left text-mocha-dark hover:text-mocha-warm py-2 transition-colors"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      Профиль
+                    </motion.button>
+                  </Link>
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => {
+                      signOut();
+                      setIsMenuOpen(false);
+                    }}
+                    className="w-full bg-mocha-warm hover:bg-mocha-dark text-white font-bold py-2 px-6 rounded-full transition duration-300"
+                  >
+                    Выйти
+                  </motion.button>
+                </>
+              ) : (
+                <Link href="/login">
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    className="w-full bg-mocha-warm hover:bg-mocha-dark text-white font-bold py-2 px-6 rounded-full transition duration-300"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    Войти
+                  </motion.button>
+                </Link>
+              )}
             </div>
           </motion.div>
         )}
       </AnimatePresence>
-    </nav>
+
+      {/* Компонент корзины */}
+      <Cart isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
+    </>
   );
 } 
